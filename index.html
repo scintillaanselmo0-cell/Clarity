@@ -2,10 +2,10 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Clarity — AI Executive Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
   :root {
@@ -526,6 +526,7 @@
 
   .bubble-ai {
     background: var(--navy-light);
+    word-break: break-word;
     border: 1px solid var(--border);
     border-radius: 4px 16px 16px 16px;
     padding: 16px 20px;
@@ -1045,23 +1046,16 @@
   }
 
   .globe-hero h1 {
-    font-family: var(--serif);
-    font-size: clamp(42px, 5vw, 72px);
-    font-weight: 400;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(40px, 5vw, 70px);
+    font-weight: 800;
     line-height: 1.06;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.02em;
     margin-bottom: 24px;
     opacity: 0;
     animation: fadeUp 0.7s 0.2s ease both;
   }
 
-  .globe-hero h1 em {
-    font-style: italic;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
 
   .globe-hero-sub {
     font-size: 17px;
@@ -1368,18 +1362,52 @@
     flex-shrink: 0;
   }
 
-  @media (max-width: 900px) {
-    .globe-hero {
-      grid-template-columns: 1fr;
-      padding: 100px 24px 60px;
-    }
-    .globe-hero-right { height: 380px; }
-    .globe-wrap { width: 320px; height: 320px; }
-    @keyframes orbit-sat {
-      0%   { transform: rotate(0deg)   translateX(170px) rotate(0deg); }
-      100% { transform: rotate(360deg) translateX(170px) rotate(-360deg); }
-    }
+
+
+  /* ─── PARTICLE TYPOGRAPHY ─── */
+  .particle-section {
+    padding: 80px 40px 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
   }
+
+  .particle-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .particle-canvas-wrap {
+    width: 100%;
+    max-width: 900px;
+    height: 220px;
+    position: relative;
+    cursor: none;
+  }
+
+  #particle-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .particle-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+    margin-top: -8px;
+  }
+
+
 
   /* ─── ANIMATIONS ─── */
   @keyframes fadeUp {
@@ -1399,16 +1427,104 @@
   }
 
   /* ─── RESPONSIVE ─── */
-  @media (max-width: 768px) {
-    nav { padding: 16px 20px; }
-    .nav-links { display: none; }
-    .hero { padding: 100px 24px 60px; }
-    .brief-section, .proof-section, .faq-section { padding: 80px 24px; }
-    .ask-section, .pricing-section, .cta-section { padding: 80px 24px; }
+  @media (max-width: 900px) {
+    .globe-hero {
+      grid-template-columns: 1fr;
+      padding: 100px 24px 48px;
+      gap: 32px;
+      text-align: center;
+    }
+    .globe-hero-left { align-items: center; }
+    .globe-hero-sub { margin: 0 auto; }
+    .hero-trust { justify-content: center; }
+    .globe-hero-right { height: 340px; }
+    .globe-wrap { width: 300px; height: 300px; }
+    .globe-card-top  { right: -4px; top: 8px; font-size: 11px; padding: 10px 14px; }
+    .globe-card-bottom { left: -4px; bottom: 28px; font-size: 11px; padding: 10px 14px; }
+    .brand-inner { grid-template-columns: 1fr; }
+    .svg-logo-section { display: none; }
     .brief-grid { grid-template-columns: 1fr; }
     .testimonials { grid-template-columns: 1fr; }
     .plans { grid-template-columns: 1fr; }
-    footer { padding: 40px 24px; flex-direction: column; align-items: flex-start; }
+    .plans .plan.featured { margin-top: 20px; }
+    .plan.featured::before { font-size: 10px; padding: 3px 12px; }
+  }
+
+  @media (max-width: 768px) {
+    /* NAV */
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .nav-cta .btn-ghost { display: none; }
+    .btn-primary { padding: 9px 16px; font-size: 13px; }
+
+    /* HERO */
+    .globe-hero { padding: 88px 20px 40px; gap: 24px; }
+    .globe-hero h1 { font-size: clamp(36px, 11vw, 56px); letter-spacing: -0.025em; }
+    .globe-hero-sub { font-size: 15px; }
+    .globe-hero-eyebrow { font-size: 9px; }
+    .btn-neuro { padding: 14px 28px; font-size: 14px; width: 100%; justify-content: center; max-width: 320px; }
+    .btn-ghost-hero { font-size: 13px; }
+    .hero-trust { flex-direction: column; gap: 12px; align-items: center; text-align: center; }
+    .globe-hero-right { height: 280px; }
+    .globe-wrap { width: 250px; height: 250px; }
+    .globe-card { display: none; }
+
+    /* PARTICLE */
+    .particle-section { padding: 56px 20px 72px; gap: 20px; }
+    .particle-canvas-wrap { height: 100px; }
+
+    /* BRAND */
+    .brand-section { padding: 56px 20px; }
+    .usp-item { padding: 16px; }
+    .usp-icon { font-size: 22px; min-width: 34px; }
+
+    /* BRIEF */
+    .brief-section { padding: 64px 20px; }
+    .brief-card { padding: 20px; }
+    .brief-header { font-size: 20px; }
+    .feature-list { gap: 16px; }
+    .feature-icon { width: 38px; height: 38px; font-size: 18px; }
+
+    /* ASK */
+    .ask-section { padding: 64px 20px; }
+    .bubble-user, .bubble-clarity { max-width: 95%; }
+    .bubble-user { font-size: 13px; }
+    .bubble-ai { font-size: 13px; }
+
+    /* PROOF */
+    .proof-section { padding: 64px 20px; }
+    .testimonial { padding: 20px; }
+    .logos { gap: 24px; }
+    .logo-item { font-size: 16px; }
+
+    /* PRICING */
+    .pricing-section { padding: 64px 20px; }
+    .plan { padding: 24px 20px; }
+    .plan-price { font-size: 44px; }
+    .pricing-toggle { flex-wrap: wrap; justify-content: center; }
+
+    /* FAQ */
+    .faq-section { padding: 64px 20px; }
+    .faq-q { font-size: 14px; }
+
+    /* CTA */
+    .cta-section { padding: 80px 20px; }
+    .cta-section h2 { font-size: clamp(30px, 9vw, 48px); }
+    .btn-hero { padding: 14px 28px; font-size: 14px; width: 100%; max-width: 320px; text-align: center; }
+
+    /* FOOTER */
+    footer { padding: 36px 20px; flex-direction: column; align-items: flex-start; gap: 20px; }
+    .footer-links { gap: 16px; }
+
+    /* SECTION TITLES */
+    .section-title { font-size: clamp(26px, 8vw, 40px); }
+    .hero-actions { width: 100%; align-items: center; }
+  }
+
+  @media (max-width: 380px) {
+    .globe-hero h1 { font-size: 32px; }
+    .globe-wrap { width: 210px; height: 210px; }
+    .plan-price { font-size: 38px; }
   }
 
   /* ─── BRAND IDENTITY SECTION ─── */
@@ -1604,6 +1720,16 @@
     </div>
   </div>
 
+</section>
+
+<!-- PARTICLE TYPOGRAPHY SECTION -->
+<section class="particle-section">
+  <div class="particle-label reveal">La chiarezza che cambia tutto</div>
+  <div class="particle-canvas-wrap" id="particle-wrap">
+    <canvas id="particle-canvas"></canvas>
+  </div>
+  <p class="particle-sub reveal">Passa il cursore — come Clarity trasforma il caos in signal.</p>
+  <a href="#pricing" class="btn-hero reveal" style="margin-top:0">Inizia gratis →</a>
 </section>
 
 <!-- BRAND USP SECTION -->
@@ -2228,6 +2354,126 @@ document.querySelectorAll('.faq-item').forEach(item => {
     if (!isOpen) item.classList.add('open');
   });
 });
+
+// ─── PARTICLE TYPOGRAPHY ───
+(function() {
+  const wrap   = document.getElementById('particle-wrap');
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas || !wrap) return;
+
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  let particles = [];
+  let mouseX = -9999, mouseY = -9999;
+  let W, H, dpr;
+
+  class Particle {
+    constructor(x, y) {
+      this.ox = x; this.oy = y;
+      this.x  = x + (Math.random() - 0.5) * 8;
+      this.y  = y + (Math.random() - 0.5) * 8;
+      this.vx = (Math.random() - 0.5) * 3;
+      this.vy = (Math.random() - 0.5) * 3;
+      // Color: mix of gold and indigo
+      const r = Math.random();
+      if (r < 0.35) {
+        this.color = `rgba(212,168,83,${0.7 + Math.random()*0.3})`;   // gold
+      } else if (r < 0.65) {
+        this.color = `rgba(167,139,250,${0.6 + Math.random()*0.4})`;  // lavender
+      } else {
+        this.color = `rgba(245,240,232,${0.5 + Math.random()*0.5})`;  // cream
+      }
+      this.size = 1.2 + Math.random() * 0.8;
+    }
+
+    update() {
+      const dx = mouseX - this.x;
+      const dy = mouseY - this.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const radius = 110;
+
+      if (dist < radius && mouseX > -999) {
+        const force = (radius - dist) / radius;
+        this.vx -= (dx / dist) * force * 18;
+        this.vy -= (dy / dist) * force * 18;
+      }
+
+      this.vx += (this.ox - this.x) * 0.07;
+      this.vy += (this.oy - this.y) * 0.07;
+      this.vx *= 0.82;
+      this.vy *= 0.82;
+      this.x  += this.vx;
+      this.y  += this.vy;
+    }
+
+    draw() {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function buildParticles() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W   = wrap.offsetWidth;
+    H   = wrap.offsetHeight;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw text to sample from
+    const fs = Math.min(W * 0.155, H * 0.62, 148);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `700 ${fs}px 'Instrument Serif', Georgia, serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Clarity', W / 2, H / 2);
+
+    const imageData = ctx.getImageData(0, 0, W * dpr, H * dpr).data;
+    particles = [];
+    const step = Math.max(3, Math.round(4 * dpr));
+
+    for (let y = 0; y < H * dpr; y += step) {
+      for (let x = 0; x < W * dpr; x += step) {
+        const idx = (y * W * dpr + x) * 4;
+        if ((imageData[idx + 3] || 0) > 128) {
+          particles.push(new Particle(x / dpr, y / dpr));
+        }
+      }
+    }
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouseX = e.clientX - r.left;
+    mouseY = e.clientY - r.top;
+  });
+  canvas.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+
+  // Touch support
+  canvas.addEventListener('touchmove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouseX = e.touches[0].clientX - r.left;
+    mouseY = e.touches[0].clientY - r.top;
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => { mouseX = -9999; mouseY = -9999; });
+
+  const ro = new ResizeObserver(() => { buildParticles(); });
+  ro.observe(wrap);
+
+  setTimeout(() => { buildParticles(); animate(); }, 200);
+})();
 
 // ─── BILLING TOGGLE ───
 let annual = true;
