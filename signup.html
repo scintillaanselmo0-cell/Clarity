@@ -706,7 +706,7 @@
   // ── SUPABASE CONFIG ──
   // Sostituisci con i tuoi dati reali da Supabase → Settings → API
   const SUPABASE_URL = 'https://zkxjmelmikohlwbypiwn.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_STc6iGStOlOS3cz3ZpVNzw_XRkR2hFM';
+  const SUPABASE_ANON_KEY = 'INSERISCI_QUI_LA_TUA_ANON_KEY';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // ── STATE ──
@@ -836,7 +836,7 @@
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/dashboard.html'
+        redirectTo: window.location.origin + '/signup.html'
       }
     });
     if (error) showError(1, error.message);
