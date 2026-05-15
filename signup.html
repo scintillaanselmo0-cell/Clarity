@@ -836,7 +836,7 @@
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/signup.html'
+        redirectTo: 'https://scintillaanselmo0-cell.github.io/Clarity/signup.html'
       }
     });
     if (error) showError(1, error.message);
