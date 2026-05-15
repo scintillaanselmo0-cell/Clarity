@@ -923,14 +923,12 @@
     const messages = document.getElementById('ask-messages');
     const input = document.getElementById('ask-input');
 
-    // User message
     const userMsg = document.createElement('div');
     userMsg.className = 'msg-user';
     userMsg.textContent = text;
     messages.appendChild(userMsg);
     input.value = '';
 
-    // Typing indicator
     const typing = document.createElement('div');
     typing.className = 'msg-ai';
     typing.innerHTML = `<div class="ai-av">C/</div><div class="ai-bubble typing"><span></span><span></span><span></span></div>`;
@@ -938,14 +936,17 @@
     messages.scrollTop = messages.scrollHeight;
 
     try {
-      const res = await fetch(MAKE_WEBHOOK_URL, {
+      // Use corsproxy.io to bypass CORS
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(MAKE_WEBHOOK_URL);
+      
+      const res = await fetch(proxyUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: text })
       });
 
       const data = await res.json();
-      const reply = data.answer || data.response || data.result || 'Non riesco a rispondere al momento. Riprova.';
+      const reply = data.answer || data.response || data.result || JSON.stringify(data);
 
       typing.innerHTML = `<div class="ai-av">C/</div><div class="ai-bubble">${reply.replace(/\n/g, '<br>')}</div>`;
 
