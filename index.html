@@ -1956,57 +1956,40 @@
       </div>
       <span>Annuale <span class="badge-save">-20%</span></span>
     </div>
-    <div class="plans">
+    <div class="plans" style="grid-template-columns: repeat(2,1fr); max-width: 680px; margin: 48px auto 0;">
       <div class="plan reveal">
         <div class="plan-name">Starter</div>
-        <div class="plan-price"><sup>€</sup><span class="price-val" data-monthly="29" data-annual="23">29</span></div>
+        <div class="plan-price"><sup>€</sup><span class="price-val" data-monthly="27" data-annual="22">27</span></div>
         <div class="plan-period">/mese · per professionisti</div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
-          <li>Morning Brief quotidiano</li>
-          <li>3 integrazioni (Notion, Gmail, Calendar)</li>
-          <li>Ask Clarity — 50 query/mese</li>
-          <li>Alert proattivi base</li>
-          <li class="muted">Analisi scenari what-if</li>
-          <li class="muted">Team briefing</li>
+          <li>3 integrazioni</li>
+          <li>Ask Clarity — 30 domande/mese</li>
+          <li>Domande extra acquistabili</li>
         </ul>
         <a href="#" class="btn-plan btn-plan-outline">Inizia gratis →</a>
       </div>
       <div class="plan featured reveal">
         <div class="plan-name">Executive</div>
-        <div class="plan-price"><sup>€</sup><span class="price-val" data-monthly="79" data-annual="63">79</span></div>
+        <div class="plan-price"><sup>€</sup><span class="price-val" data-monthly="47" data-annual="38">47</span></div>
         <div class="plan-period">/mese · per founder e C-suite</div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
-          <li>Morning Brief avanzato con priorità AI</li>
           <li>Integrazioni illimitate</li>
           <li>Ask Clarity — illimitato</li>
-          <li>Scenari what-if e simulazioni</li>
-          <li>Alert competitor e mercato</li>
-          <li>Onboarding 1:1 con specialist</li>
+          <li>Tutto di Starter incluso</li>
         </ul>
         <a href="#" class="btn-plan btn-plan-filled">Scegli Executive →</a>
       </div>
-      <div class="plan reveal">
-        <div class="plan-name">Team</div>
-        <div class="plan-price"><sup>€</sup><span class="price-val" data-monthly="249" data-annual="199">249</span></div>
-        <div class="plan-period">/mese · fino a 10 utenti</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li>Tutto di Executive × 10 seat</li>
-          <li>Team briefing condivisi</li>
-          <li>Benchmark anonimi di settore</li>
-          <li>Dashboard condivisa leadership</li>
-          <li>SSO e controllo accessi</li>
-          <li>SLA e supporto prioritario</li>
-        </ul>
-        <a href="#" class="btn-plan btn-plan-outline">Contatta sales →</a>
-      </div>
+    </div>
+    <div style="text-align:center; margin-top: 32px; padding: 16px 24px; background: rgba(212,168,83,0.06); border: 1px solid rgba(212,168,83,0.2); border-radius: 12px; max-width: 480px; margin-left: auto; margin-right: auto;">
+      <span style="font-size: 16px;">⚡</span>
+      <span style="font-size: 14px; color: var(--text-secondary); margin: 0 8px;">Hai bisogno di più domande?</span>
+      <a href="#" style="color: var(--gold); text-decoration: none; font-size: 14px; font-weight: 500;">Acquista crediti extra →</a>
+      <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; margin-bottom: 0;">Una tantum · Non scadono · Disponibili per il piano Starter</p>
     </div>
   </div>
 </section>
-
-<!-- FAQ -->
 <section class="faq-section" id="faq">
   <div class="section-label" style="text-align:center">FAQ</div>
   <h2 class="section-title">Le domande<br><em>che ti stai facendo</em></h2>
@@ -2497,12 +2480,17 @@ document.querySelectorAll('.faq-item').forEach(item => {
 // ─── BILLING TOGGLE ───
 let annual = true;
 const toggle = document.getElementById('billing-toggle');
+
+// Set correct initial prices (annual)
+document.querySelectorAll('.price-val').forEach(el => {
+  el.textContent = el.dataset.annual;
+});
+
 toggle.addEventListener('click', () => {
   annual = !annual;
   toggle.classList.toggle('off', !annual);
   document.querySelectorAll('.price-val').forEach(el => {
-    const val = annual ? el.dataset.annual : el.dataset.monthly;
-    el.textContent = val;
+    el.textContent = annual ? el.dataset.annual : el.dataset.monthly;
   });
 });
 
