@@ -1475,8 +1475,16 @@
 
     /* BRAND */
     .brand-section { padding: 56px 20px; }
-    .usp-item { padding: 16px; }
-    .usp-icon { font-size: 22px; min-width: 34px; }
+    .brand-inner {
+      grid-template-columns: 1fr !important;
+      gap: 28px;
+    }
+    .svg-logo-section { display: none; }
+    .usp-grid { width: 100%; }
+    .usp-item { padding: 16px; gap: 14px; width: 100%; box-sizing: border-box; }
+    .usp-icon { font-size: 22px; min-width: 36px; width: 36px; height: 36px; }
+    .usp-title { font-size: 15px; }
+    .usp-desc { font-size: 13px; line-height: 1.55; }
 
     /* BRIEF */
     .brief-section { padding: 64px 20px; }
@@ -1568,19 +1576,31 @@
 
   .usp-icon {
     font-size: 28px;
-    min-width: 40px;
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .usp-content {
+    flex: 1;
+    min-width: 0;
   }
 
   .usp-title {
     font-size: 15px;
     font-weight: 500;
     margin-bottom: 4px;
+    line-height: 1.3;
   }
 
   .usp-desc {
     font-size: 13px;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
   /* SVG Logo */
@@ -1728,7 +1748,6 @@
   <div class="particle-canvas-wrap" id="particle-wrap">
     <canvas id="particle-canvas"></canvas>
   </div>
-  <p class="particle-sub reveal">Passa il cursore — come Clarity trasforma il caos in signal.</p>
   <a href="#pricing" class="btn-hero reveal" style="margin-top:0">Inizia gratis →</a>
 </section>
 
@@ -1759,21 +1778,21 @@
     <div class="usp-grid">
       <div class="usp-item reveal">
         <div class="usp-icon">🌅</div>
-        <div>
-          <div class="usp-title">Morning Brief automatico</div>
-          <div class="usp-desc">Ogni mattina alle 7:00 ricevi un briefing di 5 insight critici basato sui tuoi dati reali — revenue, pipeline, team, mercato. Mai più riunioni per capire cosa sta succedendo.</div>
+        <div class="usp-content">
+          <div class="usp-title">Brief automatico — mattina o sera</div>
+          <div class="usp-desc">Scegli tu quando riceverlo: ogni mattina alle 7:00 o ogni sera alle 19:00. 5 insight critici basati sui tuoi dati reali — revenue, pipeline, team, mercato. Mai più riunioni per capire cosa sta succedendo.</div>
         </div>
       </div>
       <div class="usp-item reveal">
         <div class="usp-icon">⚡</div>
-        <div>
+        <div class="usp-content">
           <div class="usp-title">Ask Clarity — il tuo Chief of Staff</div>
           <div class="usp-desc">Fai le domande che faresti al tuo top advisor: "Qual è il nostro runway?" "Dovrei prioritizzare il deal X o Y?" Ricevi risposte strutturate con i tuoi dati, non risposte generiche.</div>
         </div>
       </div>
       <div class="usp-item reveal">
         <div class="usp-icon">🔗</div>
-        <div>
+        <div class="usp-content">
           <div class="usp-title">Connette tutto il tuo stack</div>
           <div class="usp-desc">Notion, Slack, Stripe, HubSpot, Linear, Google Workspace, Calendly — un unico layer intelligente sopra tutti i tuoi tool. Nessuna migrazione. Nessuna friction.</div>
         </div>
@@ -1788,7 +1807,7 @@
   <h2 class="section-title reveal">Il brief che ti fa<br><em>sempre un passo avanti</em></h2>
   <div class="brief-grid">
     <div class="brief-card reveal">
-      <div class="brief-time">● CLARITY BRIEF · LUN 14 APR · 07:01</div>
+      <div class="brief-time">● CLARITY BRIEF · LUN 14 APR · 07:01 — scegli mattina o sera</div>
       <div class="brief-header">Buongiorno, Marco.<br>Ecco cosa conta oggi.</div>
       <div class="brief-item">
         <div class="brief-num">01</div>
