@@ -951,10 +951,7 @@
     messages.scrollTop = messages.scrollHeight;
 
     try {
-      // Use corsproxy.io to bypass CORS
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(MAKE_WEBHOOK_URL);
-      
-      const res = await fetch(proxyUrl, {
+      const res = await fetch(MAKE_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: text })
