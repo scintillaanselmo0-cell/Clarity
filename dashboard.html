@@ -929,44 +929,101 @@
     event?.currentTarget?.classList.add('active');
   }
 
-  // ── ASK CLARITY via Make Webhook ──
+  // ── ASK CLARITY ──
+  // Strategia: chiama Groq direttamente dalla dashboard.
+  // Se la chiave non è configurata, usa il webhook Make come fallback.
+  // Per usare Groq diretto: imposta GROQ_API_KEY con la tua chiave.
+  // NOTA: in produzione considera di tenere la chiave solo server-side (Make/Edge Function).
+  const GROQ_API_KEY = ''; // chiave gestita lato Make
+  const GROQ_MODEL = 'llama-3.1-8b-instant';
   const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/s3u2w8g7jxs594wh778g9mnkjp6ud7r4';
+
+  // Mantiene la storia della conversazione per contesto
+  const conversationHistory = [];
 
   async function sendMessage(text) {
     if (!text.trim()) return;
 
-    const messages = document.getElementById('ask-messages');
+    const messagesEl = document.getElementById('ask-messages');
     const input = document.getElementById('ask-input');
 
+    // Mostra il messaggio utente
     const userMsg = document.createElement('div');
     userMsg.className = 'msg-user';
     userMsg.textContent = text;
-    messages.appendChild(userMsg);
+    messagesEl.appendChild(userMsg);
     input.value = '';
 
+    // Mostra typing indicator
     const typing = document.createElement('div');
     typing.className = 'msg-ai';
     typing.innerHTML = `<div class="ai-av">C/</div><div class="ai-bubble typing"><span></span><span></span><span></span></div>`;
-    messages.appendChild(typing);
-    messages.scrollTop = messages.scrollHeight;
+    messagesEl.appendChild(typing);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    let reply = '';
 
     try {
-      const res = await fetch(MAKE_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: text })
-      });
+      if (GROQ_API_KEY && GROQ_API_KEY.startsWith('gsk_')) {
+        // ── PERCORSO A: Groq diretto ──
+        conversationHistory.push({ role: 'user', content: text });
 
-      const data = await res.json();
-      const reply = data.answer || data.response || data.result || JSON.stringify(data);
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + GROQ_API_KEY
+          },
+          body: JSON.stringify({
+            model: GROQ_MODEL,
+            messages: [
+              {
+                role: 'system',
+                content: 'Sei Clarity, il Chief of Staff AI di questo executive. Sei conciso, preciso e orientato ai dati. Rispondi in italiano in modo professionale ma diretto. Non usare mai markdown, solo testo semplice.'
+              },
+              ...conversationHistory
+            ],
+            max_tokens: 500,
+            temperature: 0.7
+          })
+        });
+
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(`Groq ${res.status}: ${errBody?.error?.message || res.statusText}`);
+        }
+
+        const data = await res.json();
+        reply = data.choices?.[0]?.message?.content?.trim() || 'Nessuna risposta ricevuta.';
+        conversationHistory.push({ role: 'assistant', content: reply });
+
+      } else {
+        // ── PERCORSO B: Webhook Make (fallback) ──
+        const res = await fetch(MAKE_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: text })
+        });
+
+        if (!res.ok) throw new Error(`Make webhook ${res.status}`);
+
+        const data = await res.json();
+        reply = data.answer || data.response || data.result || data.text || JSON.stringify(data);
+      }
 
       typing.innerHTML = `<div class="ai-av">C/</div><div class="ai-bubble">${reply.replace(/\n/g, '<br>')}</div>`;
 
     } catch (err) {
-      typing.innerHTML = `<div class="ai-av">C/</div><div class="ai-bubble">Errore di connessione. Riprova tra poco.</div>`;
+      console.error('[Ask Clarity]', err);
+      const isAuthErr = err.message?.includes('401') || err.message?.includes('Unauthorized');
+      typing.innerHTML = `<div class="ai-av">C/</div><div class="ai-bubble" style="color:var(--red); border-color:rgba(248,113,113,0.2);">${
+        isAuthErr
+          ? '⚠️ Chiave API non valida. Controlla la configurazione di Groq.'
+          : '⚠️ Errore di connessione. Riprova tra poco.'
+      }</div>`;
     }
 
-    messages.scrollTop = messages.scrollHeight;
+    messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
   document.getElementById('ask-send').addEventListener('click', () => {
