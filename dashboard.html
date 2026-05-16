@@ -865,24 +865,38 @@
 <script>
   // ── CONFIG SUPABASE ──
   const SUPABASE_URL = 'https://zkxjmelmikohlwbypiwn.supabase.co';
-  const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreGptZWxtaWtvaGx3YnlwaXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NjAwMzEsImV4cCI6MjA5NDQzNjAzMX0.8SAIhXQsZ63yRv05uoXQQJ83DparA7r6R6BHZdmLVV4';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreGptZWxtaWtvaGx3YnlwaXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NjAwMzEsImV4cCI6MjA5NDQzNjAzMX0.8SAIhXQsZ63yRv05uoXQQJ83DparA7r6R6BHZdmLVV4';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // ── AUTH CHECK ──
   async function initDashboard() {
-    // Handle OAuth redirect hash (Google login)
-    if (window.location.hash && window.location.hash.includes('access_token')) {
-      // Let Supabase process the token, then clean the URL
-      await sb.auth.getSession();
+    // Prevent redirect loops
+    const redirecting = sessionStorage.getItem('clarity_redirecting');
+    if (redirecting) {
+      sessionStorage.removeItem('clarity_redirecting');
+    }
+
+    // Handle OAuth redirect
+    const { data: { session: sessionFromUrl } } = await sb.auth.getSession();
+    
+    // Clean URL if it has OAuth params
+    if (window.location.hash || window.location.search.includes('code=')) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    const { data: { session } } = await sb.auth.getSession();
-
-    if (!session) {
-      window.location.href = 'signup.html';
-      return;
+    if (!sessionFromUrl) {
+      await new Promise(r => setTimeout(r, 1500));
+      const { data: { session: retrySession } } = await sb.auth.getSession();
+      if (!retrySession) {
+        if (!redirecting) {
+          sessionStorage.setItem('clarity_redirecting', '1');
+          window.location.href = 'signup.html';
+        }
+        return;
+      }
     }
+
+    const session = sessionFromUrl || (await sb.auth.getSession()).data.session;
 
     const user = session.user;
     const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Utente';
