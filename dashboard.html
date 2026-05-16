@@ -740,30 +740,12 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title">Connesse</div>
-          <span class="card-badge badge-green">2 attive</span>
+          <span class="card-badge badge-green" id="connected-count">0 attive</span>
         </div>
-        <div class="integration-list">
-          <div class="integration-item">
-            <div class="integration-left">
-              <div class="integration-icon" style="background:rgba(99,102,241,0.15);">📊</div>
-              <div>
-                <div class="integration-name">Google Analytics</div>
-                <div class="integration-status">Connesso · ultimo sync 2h fa</div>
-              </div>
-            </div>
-            <button class="toggle"><div class="toggle-knob"></div></button>
+        <div class="integration-list" id="connected-list">
+          <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
+            Nessuna integrazione connessa.<br>Connetti un servizio dalla lista a destra.
           </div>
-          <div class="integration-item">
-            <div class="integration-left">
-              <div class="integration-icon" style="background:rgba(93,202,165,0.15);">💳</div>
-              <div>
-                <div class="integration-name">Stripe</div>
-                <div class="integration-status">Connesso · dati in tempo reale</div>
-              </div>
-            </div>
-            <button class="toggle"><div class="toggle-knob"></div></button>
-          </div>
-          <button class="btn-add-integration">+ Aggiungi integrazione</button>
         </div>
       </div>
       <div class="card">
@@ -771,35 +753,49 @@
           <div class="card-title">Disponibili</div>
         </div>
         <div class="integration-list">
+          <!-- Google Analytics -->
+          <div class="integration-item" id="ga-item">
+            <div class="integration-left">
+              <div class="integration-icon" style="background:rgba(99,102,241,0.15);">📊</div>
+              <div>
+                <div class="integration-name">Google Analytics</div>
+                <div class="integration-status" id="ga-status">Non connesso</div>
+              </div>
+            </div>
+            <button id="ga-btn" onclick="connectGoogleAnalytics()" style="padding:6px 14px; background:var(--indigo); border:none; border-radius:6px; color:white; font-size:12px; cursor:pointer; font-family:var(--sans);">Connetti</button>
+          </div>
+          <!-- Slack -->
           <div class="integration-item">
             <div class="integration-left">
               <div class="integration-icon" style="background:rgba(212,168,83,0.15);">🔔</div>
               <div>
                 <div class="integration-name">Slack</div>
-                <div class="integration-status">Non connesso</div>
+                <div class="integration-status">Prossimamente</div>
               </div>
             </div>
-            <button style="padding:6px 14px; background:var(--indigo); border:none; border-radius:6px; color:white; font-size:12px; cursor:pointer; font-family:var(--sans);">Connetti</button>
+            <button style="padding:6px 14px; background:var(--border); border:none; border-radius:6px; color:var(--text-muted); font-size:12px; cursor:not-allowed; font-family:var(--sans);" disabled>Presto</button>
           </div>
+          <!-- Stripe -->
           <div class="integration-item">
             <div class="integration-left">
-              <div class="integration-icon" style="background:rgba(245,240,232,0.08);">📋</div>
+              <div class="integration-icon" style="background:rgba(93,202,165,0.15);">💳</div>
               <div>
-                <div class="integration-name">Notion</div>
-                <div class="integration-status">Non connesso</div>
+                <div class="integration-name">Stripe</div>
+                <div class="integration-status">Prossimamente</div>
               </div>
             </div>
-            <button style="padding:6px 14px; background:var(--indigo); border:none; border-radius:6px; color:white; font-size:12px; cursor:pointer; font-family:var(--sans);">Connetti</button>
+            <button style="padding:6px 14px; background:var(--border); border:none; border-radius:6px; color:var(--text-muted); font-size:12px; cursor:not-allowed; font-family:var(--sans);" disabled>Presto</button>
           </div>
+          <!-- HubSpot -->
           <div class="integration-item">
             <div class="integration-left">
               <div class="integration-icon" style="background:rgba(248,113,113,0.15);">📈</div>
               <div>
                 <div class="integration-name">HubSpot</div>
-                <div class="integration-status">Non connesso</div>
+                <div class="integration-status">Prossimamente</div>
               </div>
             </div>
-            <button style="padding:6px 14px; background:var(--indigo); border:none; border-radius:6px; color:white; font-size:12px; cursor:pointer; font-family:var(--sans);">Connetti</button>
+            <button style="padding:6px 14px; background:var(--border); border:none; border-radius:6px; color:var(--text-muted); font-size:12px; cursor:not-allowed; font-family:var(--sans);" disabled>Presto</button>
           </div>
         </div>
       </div>
@@ -1057,6 +1053,101 @@
     document.getElementById('pref-en').style.background = lang === 'en' ? 'rgba(79,70,229,0.1)' : 'transparent';
     document.getElementById('pref-en').style.color = lang === 'en' ? 'var(--text-primary)' : 'var(--text-muted)';
   }
+
+  // ── GOOGLE ANALYTICS OAUTH ──
+  const GA_CLIENT_ID = '531795459200-ruf40ng892cs0idsv2oh05l45bnts83p.apps.googleusercontent.com';
+  const GA_REDIRECT_URI = 'https://scintillaanselmo0-cell.github.io/Clarity/analytics-callback.html';
+  const GA_SCOPES = 'https://www.googleapis.com/auth/analytics.readonly';
+
+  function connectGoogleAnalytics() {
+    const state = Math.random().toString(36).substring(2);
+    sessionStorage.setItem('ga_oauth_state', state);
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GA_CLIENT_ID}&redirect_uri=${encodeURIComponent(GA_REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(GA_SCOPES)}&access_type=offline&prompt=consent&state=${state}`;
+    window.open(url, '_blank', 'width=500,height=600');
+    // Ascolta il messaggio dalla finestra callback
+    window.addEventListener('message', onGACallback, { once: true });
+  }
+
+  async function onGACallback(event) {
+    if (event.origin !== 'https://scintillaanselmo0-cell.github.io') return;
+    const { code, state } = event.data;
+    if (!code) return;
+    if (state !== sessionStorage.getItem('ga_oauth_state')) return;
+
+    document.getElementById('ga-status').textContent = 'Connessione in corso...';
+    document.getElementById('ga-btn').disabled = true;
+
+    try {
+      // Salva il codice su Supabase — Make lo userà per ottenere il token
+      const { data: { session } } = await sb.auth.getSession();
+      const { error } = await sb.from('integrazioni').upsert({
+        user_id: session.user.id,
+        provider: 'google_analytics',
+        auth_code: code,
+        redirect_uri: GA_REDIRECT_URI,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      }, { onConflict: 'user_id,provider' });
+
+      if (error) throw error;
+
+      document.getElementById('ga-status').textContent = '✅ Connesso';
+      document.getElementById('ga-btn').textContent = 'Disconnetti';
+      document.getElementById('ga-btn').style.background = 'rgba(248,113,113,0.15)';
+      document.getElementById('ga-btn').style.color = 'var(--red)';
+      document.getElementById('ga-btn').onclick = disconnectGA;
+      updateConnectedCount();
+
+    } catch (err) {
+      console.error('GA connect error:', err);
+      document.getElementById('ga-status').textContent = '❌ Errore — riprova';
+      document.getElementById('ga-btn').disabled = false;
+    }
+  }
+
+  async function disconnectGA() {
+    const { data: { session } } = await sb.auth.getSession();
+    await sb.from('integrazioni').delete().eq('user_id', session.user.id).eq('provider', 'google_analytics');
+    document.getElementById('ga-status').textContent = 'Non connesso';
+    document.getElementById('ga-btn').textContent = 'Connetti';
+    document.getElementById('ga-btn').style.background = 'var(--indigo)';
+    document.getElementById('ga-btn').style.color = 'white';
+    document.getElementById('ga-btn').onclick = connectGoogleAnalytics;
+    document.getElementById('ga-btn').disabled = false;
+    updateConnectedCount();
+  }
+
+  async function loadIntegrations() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    const { data } = await sb.from('integrazioni').select('*').eq('user_id', session.user.id);
+    if (!data) return;
+    const ga = data.find(i => i.provider === 'google_analytics');
+    if (ga) {
+      document.getElementById('ga-status').textContent = '✅ Connesso';
+      document.getElementById('ga-btn').textContent = 'Disconnetti';
+      document.getElementById('ga-btn').style.background = 'rgba(248,113,113,0.15)';
+      document.getElementById('ga-btn').style.color = 'var(--red)';
+      document.getElementById('ga-btn').onclick = disconnectGA;
+    }
+    updateConnectedCount(data.length);
+  }
+
+  function updateConnectedCount(n) {
+    if (n === undefined) {
+      sb.auth.getSession().then(({ data: { session } }) => {
+        if (!session) return;
+        sb.from('integrazioni').select('*', { count: 'exact' }).eq('user_id', session.user.id).then(({ count }) => {
+          document.getElementById('connected-count').textContent = `${count || 0} attive`;
+        });
+      });
+    } else {
+      document.getElementById('connected-count').textContent = `${n} attive`;
+    }
+  }
+
+  // Carica lo stato integrazioni all'avvio
+  loadIntegrations();
 
   // ── INIT ──
   // init handled by onAuthStateChange above
