@@ -870,6 +870,13 @@
 
   // ── AUTH CHECK ──
   async function initDashboard() {
+    // Handle OAuth redirect hash (Google login)
+    if (window.location.hash && window.location.hash.includes('access_token')) {
+      // Let Supabase process the token, then clean the URL
+      await sb.auth.getSession();
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     const { data: { session } } = await sb.auth.getSession();
 
     if (!session) {
