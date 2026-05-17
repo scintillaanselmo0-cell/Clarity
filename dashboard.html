@@ -841,12 +841,27 @@
     </div>
     <div class="card" style="max-width: 560px;">
       <div class="card-header"><div class="card-title">Piano</div></div>
-      <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 20px;">
         <div>
           <div style="font-size:15px; font-weight:500;" id="plan-display">Starter — €27/mese</div>
           <div style="font-size:12px; color:var(--text-muted); margin-top:4px;" id="queries-display">30 domande/mese · domande extra disponibili</div>
         </div>
-        <button style="padding:9px 18px; background:var(--indigo); border:none; border-radius:8px; color:white; font-family:var(--sans); font-size:13px; cursor:pointer;">Upgrade →</button>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="border:1px solid var(--border); border-radius:12px; padding:16px;">
+          <div style="font-size:13px; color:var(--text-muted); margin-bottom:4px;">Starter</div>
+          <div style="font-size:20px; font-weight:600; margin-bottom:2px;">€27<span style="font-size:13px; font-weight:400; color:var(--text-muted)">/mese</span></div>
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">o €259/anno (-20%)</div>
+          <button onclick="startCheckout('starter','monthly')" style="width:100%; padding:8px; background:var(--indigo); border:none; border-radius:8px; color:white; font-family:var(--sans); font-size:13px; cursor:pointer; margin-bottom:6px;">Mensile →</button>
+          <button onclick="startCheckout('starter','annual')" style="width:100%; padding:8px; background:transparent; border:1px solid var(--indigo); border-radius:8px; color:var(--indigo-light); font-family:var(--sans); font-size:13px; cursor:pointer;">Annuale →</button>
+        </div>
+        <div style="border:1px solid rgba(212,168,83,0.3); border-radius:12px; padding:16px; background:rgba(212,168,83,0.05);">
+          <div style="font-size:13px; color:var(--gold); margin-bottom:4px;">Pro ✦</div>
+          <div style="font-size:20px; font-weight:600; margin-bottom:2px;">€47<span style="font-size:13px; font-weight:400; color:var(--text-muted)">/mese</span></div>
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">o €451/anno (-20%)</div>
+          <button onclick="startCheckout('pro','monthly')" style="width:100%; padding:8px; background:var(--gold); border:none; border-radius:8px; color:#0A0F1E; font-family:var(--sans); font-size:13px; cursor:pointer; margin-bottom:6px;">Mensile →</button>
+          <button onclick="startCheckout('pro','annual')" style="width:100%; padding:8px; background:transparent; border:1px solid var(--gold); border-radius:8px; color:var(--gold); font-family:var(--sans); font-size:13px; cursor:pointer;">Annuale →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1064,6 +1079,49 @@
     document.getElementById('pref-en').style.borderColor = lang === 'en' ? 'var(--indigo)' : 'var(--border)';
     document.getElementById('pref-en').style.background = lang === 'en' ? 'rgba(79,70,229,0.1)' : 'transparent';
     document.getElementById('pref-en').style.color = lang === 'en' ? 'var(--text-primary)' : 'var(--text-muted)';
+  }
+
+  // ── STRIPE CHECKOUT ──
+  const STRIPE_CHECKOUT_WEBHOOK = 'https://hook.eu1.make.com/6y1mxzybr0dq5fmvngiq4pss9jd1n8p9';
+  const PRICE_IDS = {
+    starter_monthly: 'price_1TY9kFHpRj7aftgeIslF4MCx',
+    starter_annual:  'price_1TY9pIHpRj7aftgeYmAlHKvZ',
+    pro_monthly:     'price_1TY9koHpRj7aftge9i5kUOsX',
+    pro_annual:      'price_1TY9pzHpRj7aftgeEpl7vzcD'
+  };
+
+  async function startCheckout(plan, billing) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+
+    const priceKey = `${plan}_${billing}`;
+    const priceId = PRICE_IDS[priceKey];
+    const successUrl = `https://scintillaanselmo0-cell.github.io/Clarity/success.html?plan=${plan}&billing=${billing}`;
+    const cancelUrl = `https://scintillaanselmo0-cell.github.io/Clarity/dashboard.html`;
+
+    try {
+      const res = await fetch(STRIPE_CHECKOUT_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          price_id: priceId,
+          customer_email: session.user.email,
+          success_url: successUrl,
+          cancel_url: cancelUrl,
+          plan,
+          billing
+        })
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Errore nel checkout. Riprova.');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      alert('Errore di connessione. Riprova.');
+    }
   }
 
   // ── STRIPE KEY ──
