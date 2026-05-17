@@ -1082,46 +1082,20 @@
   }
 
   // ── STRIPE CHECKOUT ──
-  const STRIPE_CHECKOUT_WEBHOOK = 'https://hook.eu1.make.com/6y1mxzybr0dq5fmvngiq4pss9jd1n8p9';
-  const PRICE_IDS = {
-    starter_monthly: 'price_1TY9kFHpRj7aftgeIslF4MCx',
-    starter_annual:  'price_1TY9pIHpRj7aftgeYmAlHKvZ',
-    pro_monthly:     'price_1TY9koHpRj7aftge9i5kUOsX',
-    pro_annual:      'price_1TY9pzHpRj7aftgeEpl7vzcD'
+  const PAYMENT_LINKS = {
+    starter_monthly: 'https://buy.stripe.com/test_4gM00j8jz1Yg1DA1r2fAc01',
+    starter_annual:  'https://buy.stripe.com/test_fZu4gz1Vb1Yg6XUedOfAc02',
+    pro_monthly:     'https://buy.stripe.com/test_7sYcN5gQ50Uc3LIb1CfAc03',
+    pro_annual:      'https://buy.stripe.com/test_eVq7sLdDT1Ygeqm8TufAc04'
   };
 
   async function startCheckout(plan, billing) {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return;
 
-    const priceKey = `${plan}_${billing}`;
-    const priceId = PRICE_IDS[priceKey];
-    const successUrl = `https://scintillaanselmo0-cell.github.io/Clarity/success.html?plan=${plan}&billing=${billing}`;
-    const cancelUrl = `https://scintillaanselmo0-cell.github.io/Clarity/dashboard.html`;
-
-    try {
-      const res = await fetch(STRIPE_CHECKOUT_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          price_id: priceId,
-          customer_email: session.user.email,
-          success_url: successUrl,
-          cancel_url: cancelUrl,
-          plan,
-          billing
-        })
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Errore nel checkout. Riprova.');
-      }
-    } catch (err) {
-      console.error('Checkout error:', err);
-      alert('Errore di connessione. Riprova.');
-    }
+    const link = PAYMENT_LINKS[`${plan}_${billing}`];
+    const email = encodeURIComponent(session.user.email);
+    window.location.href = `${link}?prefilled_email=${email}`;
   }
 
   // ── STRIPE KEY ──
